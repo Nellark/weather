@@ -1,0 +1,113 @@
+<div class="weather-app" [ngClass]="getWeatherClass()">
+  <!-- Animated Background Effects -->
+  <div class="weather-effects">
+    <div class="rain-container" *ngIf="showRainEffect()">
+      <div class="rain-drop" *ngFor="let drop of rainDrops" [style.left.%]="drop.left"
+           [style.animation-delay.s]="drop.delay" [style.animation-duration.s]="drop.duration">
+      </div>
+    </div>
+    <div class="snow-container" *ngIf="showSnowEffect()">
+      <div class="snowflake" *ngFor="let flake of snowflakes" [style.left.%]="flake.left"
+           [style.animation-delay.s]="flake.delay" [style.animation-duration.s]="flake.duration">
+        ❄
+      </div>
+    </div>
+    <div class="sun-container" *ngIf="showSunEffect()">
+      <div class="sun"><div class="sun-rays"></div></div>
+    </div>
+    <div class="clouds-container" *ngIf="showCloudsEffect()">
+      <div class="cloud cloud-1">☁️</div>
+      <div class="cloud cloud-2">☁️</div>
+      <div class="cloud cloud-3">☁️</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="app-header">
+      <h1 class="app-title">Weather App</h1>
+      <p class="app-subtitle">Get real-time weather information</p>
+    </header>
+
+    <div class="search-section">
+      <div class="search-container">
+        <input type="text" [(ngModel)]="city" (keyup.enter)="searchWeather()"
+               placeholder="Enter city name..." class="search-input" [disabled]="isLoading" />
+        <button (click)="searchWeather()" class="search-button"
+                [disabled]="isLoading || !city.trim()">
+          <span *ngIf="!isLoading">🔍</span>
+          <span *ngIf="isLoading" class="loading-spinner">⏳</span>
+        </button>
+        <button (click)="togglePopularCities()" class="city-button">
+          {{ showPopularCities ? 'Hide Cities' : 'Show Cities' }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="quick-cities" *ngIf="showPopularCities">
+      <h3 class="quick-cities-title ">Popular Cities</h3>
+      <div class="cities-grid">
+        <button *ngFor="let cityName of popularCities" (click)="quickSearch(cityName)"
+                class="city-button" [disabled]="isLoading">
+          {{ cityName }}
+        </button>
+      </div>
+    </div>
+
+    
+
+    <div *ngIf="weatherData && forecastData" class="weather-content">
+      <div class="main-weather-card">
+        <div class="location-info">
+          <h2 class="city-name">{{ weatherData.location.name }}</h2>
+          <p class="location-details">{{ weatherData.location.region }}, {{ weatherData.location.country }}</p>
+        </div>
+        <div class="temperature-section">
+          <div class="temperature">{{ weatherData.current.temp_c }}°C</div>
+          <div class="temperature-fahrenheit">{{ weatherData.current.temp_f }}°F</div>
+          <div class="forecast-temp" *ngIf="getCurrentForecastTemp() !== null">
+            Forecast: {{ getCurrentForecastTemp() }}°C
+          </div>
+        </div>
+        <div class="condition-section">
+          <div class="weather-icon">{{ getWeatherIcon() }}</div>
+          <div class="condition-text">{{ weatherData.current.condition.text }}</div>
+          <div class="feels-like">Feels like {{ weatherData.current.feelslike_c }}°C</div>
+        </div>
+      </div>
+
+      <div class="weather-details-grid">
+        <div class="detail-card">
+          <div class="detail-icon">💨</div>
+          <div class="detail-label">Wind</div>
+          <div class="detail-value">{{ weatherData.current.wind_kph }} km/h</div>
+          <div class="detail-extra">{{ weatherData.current.wind_dir }}</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">💧</div>
+          <div class="detail-label">Humidity</div>
+          <div class="detail-value">{{ weatherData.current.humidity }}%</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">🌡️</div>
+          <div class="detail-label">Pressure</div>
+          <div class="detail-value">{{ weatherData.current.pressure_mb }} mb</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">👁️</div>
+          <div class="detail-label">Visibility</div>
+          <div class="detail-value">{{ weatherData.current.vis_km }} km</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">☀️</div>
+          <div class="detail-label">UV Index</div>
+          <div class="detail-value">{{ weatherData.current.uv }}</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">☁️</div>
+          <div class="detail-label">Cloud Cover</div>
+          <div class="detail-value">{{ weatherData.current.cloud }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
